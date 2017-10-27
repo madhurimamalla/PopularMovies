@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="action_settings">Sort</string>
+    <string name="error_message">Some error has occurred. Try after sometime</string>
+</resources>
