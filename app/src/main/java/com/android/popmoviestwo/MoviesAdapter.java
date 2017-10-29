@@ -14,6 +14,8 @@ import java.util.List;
 
 public class MoviesAdapter extends ArrayAdapter<Movie> {
 
+
+
     /**
      * w185 is the size of the image getting retrieved
      */
@@ -70,10 +72,5 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
         movieTitle.setText(movie.movieTitle);
 
         return convertView;
-    }
-
-    public void setMoviesData(List<Movie> moviesList) {
-        mMoviesList = moviesList;
-        notifyDataSetChanged();
     }
 }
