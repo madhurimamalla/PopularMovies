@@ -3,4 +3,5 @@
     <string name="action_sort_by_top_rated">Sort by Top Rated</string>
     <string name="action_sort_by_popular">Sort by Popular</string>
     <string name="error_message">Some error has occurred. Try after sometime</string>
+    <string name="title_activity_movie_details">Movie Details</string>
 </resources>
