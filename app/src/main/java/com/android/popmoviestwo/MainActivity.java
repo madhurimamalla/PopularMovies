@@ -1,5 +1,6 @@
 package com.android.popmoviestwo;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
 
+import com.android.popmoviestwo.MoviesAdapter.MoviesAdapterOnClickListener;
 import com.android.popmoviestwo.utils.MoviesListJsonUtils;
 import com.android.popmoviestwo.utils.NetworkUtils;
 
@@ -19,7 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MoviesAdapterOnClickListener{
 
     // TODO Try to add some loading icon and Error messages at the end the project
     private MoviesAdapter movieAdapter;
@@ -33,10 +35,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         new FetchMoviesList().execute(PATH_POPULAR_PARAM);
-        movieAdapter = new MoviesAdapter(this, moviesList);
         gridView = (GridView) findViewById(R.id.movies_grid);
+        movieAdapter = new MoviesAdapter(this, moviesList, this);
         gridView.setVisibility(View.VISIBLE);
         gridView.setAdapter(movieAdapter);
+    }
+
+    @Override
+    public void onClick(Movie movie) {
+        Intent movieDetailsIntent = new Intent(this,MovieDetailsActivity.class);
+        movieDetailsIntent.putExtra(Intent.EXTRA_TEXT,movie.getMovieId());
+        startActivity(movieDetailsIntent);
     }
 
     public class FetchMoviesList extends AsyncTask<String, Void, List<Movie>> {
@@ -104,4 +113,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

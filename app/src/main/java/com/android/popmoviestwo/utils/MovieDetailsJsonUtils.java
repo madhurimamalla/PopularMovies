@@ -44,7 +44,7 @@ public class MovieDetailsJsonUtils {
          */
         final String PM_OVERVIEW = "overview";
 
-        Movie parsedMovieDetails = null;
+        Movie parsedMovieDetails = new Movie("","","");
 
         JSONObject movieJson = new JSONObject(moviesJsonStr);
 
