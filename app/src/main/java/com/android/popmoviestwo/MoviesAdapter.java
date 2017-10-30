@@ -12,13 +12,13 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class MoviesAdapter extends ArrayAdapter<Movie> {
+class MoviesAdapter extends ArrayAdapter<Movie> {
 
     private final MoviesAdapterOnClickListener mListener;
     /**
      * w185 is the size of the image getting retrieved
      */
-    String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w185//";
+    private final String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w185//";
 
     public interface MoviesAdapterOnClickListener{
         void onClick(Movie movie);
@@ -55,10 +55,8 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
         Movie movie = getItem(position);
 
         if (convertView == null) {
-            if (convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(
                         R.layout.movie_item, parent, false);
-            }
         }
 
         /**
@@ -79,7 +77,7 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
          * Displays the textView movieTitle
          */
         TextView movieTitle = (TextView) convertView.findViewById(R.id.movie_title);
-        movieTitle.setText(movie.movieTitle);
+        movieTitle.setText(movie.getMovieTitle());
 
         return convertView;
     }

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,10 +24,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
 
     // TODO Try to add some loading icon and Error messages at the end the project
     private MoviesAdapter movieAdapter;
-    public GridView gridView;
-    final static String PATH_POPULAR_PARAM = "popular";
-    final static String PATH_TOP_RATED_PARAM = "top_rated";
-    public List<Movie> moviesList = new ArrayList<>();
+    private GridView gridView;
+    private final static String PATH_POPULAR_PARAM = "popular";
+    private final static String PATH_TOP_RATED_PARAM = "top_rated";
+    private List<Movie> moviesList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
         startActivity(movieDetailsIntent);
     }
 
-    public class FetchMoviesList extends AsyncTask<String, Void, List<Movie>> {
+    private class FetchMoviesList extends AsyncTask<String, Void, List<Movie>> {
 
         @Override
         protected void onPreExecute() {
@@ -68,11 +67,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
 
             try {
                 String jsonPopularMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesPopularUrl);
-                Log.v(path, jsonPopularMoviesResponse);
-
-                List<Movie> simpleJsonMoviesData = MoviesListJsonUtils.getSimpleMoviesInformationFromJson(getApplicationContext(), jsonPopularMoviesResponse);
-                return simpleJsonMoviesData;
-
+                return MoviesListJsonUtils.getSimpleMoviesInformationFromJson(jsonPopularMoviesResponse);
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;

@@ -20,25 +20,20 @@ import java.util.Scanner;
 
 public class NetworkUtils {
 
-    private static String TAG = NetworkUtils.class.getSimpleName();
+    private static final String TAG = NetworkUtils.class.getSimpleName();
 
-    private static String BASE_URL = "https://api.themoviedb.org/3/movie";
+    private static final String BASE_URL = "https://api.themoviedb.org/3/movie";
 
-    /**
-     * API will return data in this format
-     */
-    private static final String format = "json";
+    private final static String QUERY_PARAM = "api_key";
 
-    final static String QUERY_PARAM = "api_key";
+    private final static String LANG_PARAM = "language";
 
-    final static String LANG_PARAM = "language";
-
-    final static String PAGE_PARAM = "page";
+    private final static String PAGE_PARAM = "page";
 
    /* *//**
      * TODO Insert your API Key here
      */
-    final static String API_Key = "<<Insert API Key here>>";
+    final static String API_Key = "<<Insert API Key>>";
 
     public static URL buildUrl(String path) {
 

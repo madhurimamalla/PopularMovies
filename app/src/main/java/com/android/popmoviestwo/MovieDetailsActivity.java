@@ -7,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +26,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private ImageView moviePoster;
     private TextView movieReleaseDate;
     private TextView movieOverview;
+    private TextView movieUserRating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         movieOverview = (TextView) findViewById(R.id.movie_overview);
         moviePoster = (ImageView) findViewById(R.id.movie_image_large);
         movieReleaseDate = (TextView) findViewById(R.id.movie_release_date);
+        movieUserRating = (TextView) findViewById(R.id.movie_user_rating);
 
         Intent previousIntent = getIntent();
         String movieId = previousIntent.getStringExtra(Intent.EXTRA_TEXT);
@@ -59,7 +60,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     public class FetchMovieDetails extends AsyncTask<String, Void, Movie>{
 
-        String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w780//";
+        final String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w780//";
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -76,9 +77,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             URL moviesPopularUrl = NetworkUtils.buildGetMovieDetailsUrl(id);
             try {
                 String jsonPopularMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesPopularUrl);
-                Log.v(id, jsonPopularMoviesResponse);
-                Movie movie = MovieDetailsJsonUtils.getMovieInformationFromJson(getApplicationContext(), jsonPopularMoviesResponse);
-                return movie;
+                return MovieDetailsJsonUtils.getMovieInformationFromJson(jsonPopularMoviesResponse);
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
@@ -94,6 +93,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 movieTitle.setText(movie.getMovieTitle());
                 Picasso.with(getApplicationContext()).load(IMAGE_MOVIE_URL + movie.getMovieImgPath()).into(moviePoster);
                 movieOverview.setText("Overview: " + movie.getOverview());
+                movieUserRating.setText("User Rating: " + movie.getUserRating());
                 movieReleaseDate.setText("Release Date: " + movie.getReleaseDate());
             }
         }

@@ -4,8 +4,6 @@ package com.android.popmoviestwo.utils;
  * Created by mmalla on 27/10/17.
  */
 
-import android.content.Context;
-
 import com.android.popmoviestwo.Movie;
 
 import org.json.JSONException;
@@ -17,7 +15,7 @@ import org.json.JSONObject;
  */
 public class MovieDetailsJsonUtils {
 
-    public static Movie getMovieInformationFromJson(Context context, String moviesJsonStr) throws JSONException {
+    public static Movie getMovieInformationFromJson(String moviesJsonStr) throws JSONException {
 
         /**
          * Movie release date
@@ -40,9 +38,14 @@ public class MovieDetailsJsonUtils {
         final String PM_IMG_PATH = "poster_path";
 
         /**
-         *
+         * Overview of the movie
          */
         final String PM_OVERVIEW = "overview";
+
+        /**
+         * user rating for the movie
+         */
+        final String PM_VOTE_AVG = "vote_average";
 
         Movie parsedMovieDetails = new Movie("","","");
 
@@ -52,11 +55,13 @@ public class MovieDetailsJsonUtils {
         String overview = movieJson.getString(PM_OVERVIEW);
         String movieTitle = movieJson.getString(PM_MOVIE_TITLE);
         String movieImgPath = movieJson.getString(PM_IMG_PATH);
+        String userRating = movieJson.getString(PM_VOTE_AVG);
 
         parsedMovieDetails.setMovieTitle(movieTitle);
         parsedMovieDetails.setReleaseDate(releaseDate);
         parsedMovieDetails.setMovieImgPath(movieImgPath);
         parsedMovieDetails.setOverview(overview);
+        parsedMovieDetails.setUserRating(userRating);
 
         return parsedMovieDetails;
     }

@@ -6,11 +6,12 @@ package com.android.popmoviestwo;
 
 public class Movie {
 
-    String movieTitle;
-    String movieImgPath;
-    String movieId;
-    String releaseDate;
-    String overview;
+    private String movieTitle;
+    private String movieImgPath;
+    private String movieId;
+    private String releaseDate;
+    private String overview;
+    private String userRating;
 
     /**
      * Constructor here
@@ -64,4 +65,13 @@ public class Movie {
     public void setOverview(String overview) {
         this.overview = overview;
     }
+
+    public String getUserRating() {
+        return userRating;
+    }
+
+    public void setUserRating(String userRating) {
+        this.userRating = userRating;
+    }
+
 }

@@ -4,8 +4,6 @@ package com.android.popmoviestwo.utils;
  * Created by mmalla on 23/10/17.
  */
 
-import android.content.Context;
-
 import com.android.popmoviestwo.Movie;
 
 import org.json.JSONArray;
@@ -22,7 +20,7 @@ import java.util.List;
  */
 public class MoviesListJsonUtils {
 
-    public static List<Movie> getSimpleMoviesInformationFromJson(Context context, String moviesJsonStr) throws JSONException {
+    public static List<Movie> getSimpleMoviesInformationFromJson(String moviesJsonStr) throws JSONException {
 
         final String PM_RESULTS = "results";
 
