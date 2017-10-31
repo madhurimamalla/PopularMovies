@@ -47,7 +47,7 @@ public class MovieDetailsJsonUtils {
          */
         final String PM_VOTE_AVG = "vote_average";
 
-        Movie parsedMovieDetails = new Movie("","","");
+        Movie parsedMovieDetails = new Movie("", "", "");
 
         JSONObject movieJson = new JSONObject(moviesJsonStr);
 

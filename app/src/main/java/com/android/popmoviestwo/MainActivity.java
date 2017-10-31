@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.popmoviestwo.MoviesAdapter.MoviesAdapterOnClickListener;
 import com.android.popmoviestwo.utils.MoviesListJsonUtils;
@@ -20,11 +22,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapterOnClickListener{
+public class MainActivity extends AppCompatActivity implements MoviesAdapterOnClickListener {
 
-    // TODO Try to add some loading icon and Error messages at the end the project
     private MoviesAdapter movieAdapter;
     private GridView gridView;
+    private TextView mErrorMessage;
+    private ProgressBar mLoadingIcon;
     private final static String PATH_POPULAR_PARAM = "popular";
     private final static String PATH_TOP_RATED_PARAM = "top_rated";
     private List<Movie> moviesList = new ArrayList<>();
@@ -33,8 +36,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new FetchMoviesList().execute(PATH_POPULAR_PARAM);
         gridView = (GridView) findViewById(R.id.movies_grid);
+        mErrorMessage = (TextView) findViewById(R.id.error_message);
+        mLoadingIcon = (ProgressBar) findViewById(R.id.loading_icon);
+        new FetchMoviesList().execute(PATH_POPULAR_PARAM);
         movieAdapter = new MoviesAdapter(this, moviesList, this);
         gridView.setVisibility(View.VISIBLE);
         gridView.setAdapter(movieAdapter);
@@ -42,8 +47,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
 
     @Override
     public void onClick(Movie movie) {
-        Intent movieDetailsIntent = new Intent(this,MovieDetailsActivity.class);
-        movieDetailsIntent.putExtra(Intent.EXTRA_TEXT,movie.getMovieId());
+        Intent movieDetailsIntent = new Intent(this, MovieDetailsActivity.class);
+        movieDetailsIntent.putExtra(Intent.EXTRA_TEXT, movie.getMovieId());
         startActivity(movieDetailsIntent);
     }
 
@@ -51,7 +56,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
 
         @Override
         protected void onPreExecute() {
-            super.onPreExecute();
+            gridView.setVisibility(View.INVISIBLE);
+            mLoadingIcon.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -76,13 +82,18 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
                 return null;
             }
         }
+
         @Override
         protected void onPostExecute(List<Movie> mList) {
             if (mList != null) {
+                mErrorMessage.setVisibility(View.INVISIBLE);
+                gridView.setVisibility(View.VISIBLE);
                 moviesList.clear();
                 moviesList.addAll(mList);
                 movieAdapter.notifyDataSetChanged();
             } else {
+                gridView.setVisibility(View.INVISIBLE);
+                mErrorMessage.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -108,5 +119,4 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

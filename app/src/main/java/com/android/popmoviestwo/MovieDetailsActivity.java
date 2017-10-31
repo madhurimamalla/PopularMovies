@@ -56,11 +56,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         });
     }
 
-    //TODO fill the details and display them
-
     public class FetchMovieDetails extends AsyncTask<String, Void, Movie>{
 
-        final String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w780//";
+        final String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w500//";
         @Override
         protected void onPreExecute() {
             super.onPreExecute();

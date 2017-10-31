@@ -26,12 +26,12 @@
         android:layout_margin="5dp"
         android:layout_gravity="center"
         card_view:cardBackgroundColor="@android:color/white"
-        android:layout_weight="0.63">
+        android:layout_weight="0.27">
 
         <ImageView
             android:id="@+id/movie_image_large"
-            android:layout_width="320dp"
-            android:layout_height="335dp"
+            android:layout_width="257dp"
+            android:layout_height="260dp"
             android:layout_gravity="center"
             android:layout_weight="0.66"
             android:contentDescription="@string/content_description"
