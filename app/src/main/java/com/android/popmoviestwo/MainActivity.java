@@ -69,6 +69,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
 
             String path = params[0];
 
+            /**
+             * Get the URL to fetch the Popular movies
+             */
             URL moviesPopularUrl = NetworkUtils.buildUrl(path);
 
             try {

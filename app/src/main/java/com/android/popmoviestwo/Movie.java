@@ -1,5 +1,7 @@
 package com.android.popmoviestwo;
 
+import java.util.List;
+
 /**
  * Created by mmalla on 25/10/17.
  */
@@ -12,6 +14,16 @@ public class Movie {
     private String releaseDate;
     private String overview;
     private String userRating;
+
+    /**
+     * There can be more than one review
+     */
+    private List<String> moviereviewsList;
+
+    /**
+     * There can be more than one video link
+     */
+    private List<String> movieTrailerList;
 
     /**
      * Constructor here
@@ -74,4 +86,19 @@ public class Movie {
         this.userRating = userRating;
     }
 
+    public List<String> getMoviereviewsList() {
+        return moviereviewsList;
+    }
+
+    public void setMoviereviewsList(List<String> moviereviewsList) {
+        this.moviereviewsList = moviereviewsList;
+    }
+
+    public List<String> getMovieTrailerList() {
+        return movieTrailerList;
+    }
+
+    public void setMovieTrailerList(List<String> movieTrailerList) {
+        this.movieTrailerList = movieTrailerList;
+    }
 }

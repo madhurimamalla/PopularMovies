@@ -30,18 +30,27 @@ public class NetworkUtils {
 
     private final static String PAGE_PARAM = "page";
 
-   /* *//**
-     * TODO Insert your API Key here
+    private final static String PATH_VIDEOS = "videos";
+
+    private final static String PATH_REVIEWS = "reviews";
+
+    private final static String LANG_VALUE = "en_US";
+
+    private final static String PAGE_VALUE = "1";
+
+   /* */
+    /**
+     * TODO Add your API Key here before running the code
      */
-    final static String API_Key = "<<Insert the API Key here>>";
+    final static String API_Key = "<<Insert API Key here>>";
 
     public static URL buildUrl(String path) {
 
         Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                 .appendPath(path)
                 .appendQueryParameter(QUERY_PARAM, API_Key)
-                .appendQueryParameter(LANG_PARAM, "en_US")
-                .appendQueryParameter(PAGE_PARAM, "1")
+                .appendQueryParameter(LANG_PARAM, LANG_VALUE)
+                .appendQueryParameter(PAGE_PARAM, PAGE_VALUE)
                 .build();
 
         URL url = null;
@@ -57,27 +66,84 @@ public class NetworkUtils {
     }
 
     /**
-     * Description: https://api.themoviedb.org/3/movie/19404?api_key=9f8cc2e73ac5f78cdc4e2bdc6a856a0c&language=en-US
+     * Description: https://api.themoviedb.org/3/movie/19404?api_key=<<api-key>></>&language=en-US
+     *
      * @param id
      * @return
      */
-    public static URL buildGetMovieDetailsUrl(String id){
+    public static URL buildGetMovieDetailsUrl(String id) {
 
         Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                 .appendPath(id)
-                .appendQueryParameter(QUERY_PARAM,API_Key)
-                .appendQueryParameter(LANG_PARAM,"en_US")
+                .appendQueryParameter(QUERY_PARAM, API_Key)
+                .appendQueryParameter(LANG_PARAM, LANG_VALUE)
                 .build();
 
         URL url = null;
 
-        try{
+        try {
             url = new URL(builtUri.toString());
-        } catch (MalformedURLException e){
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
 
-        Log.v(TAG,"Built URL " + url);
+        Log.v(TAG, "Built URL " + url);
+        return url;
+    }
+
+    /**
+     * https://api.themoviedb.org/3/movie/19404/videos?api_key=<<api-key>></>&language=en-US
+     *
+     * @param id
+     * @return
+     */
+    public static URL buildGetVideosUrl(String id) {
+
+        Uri builtUrl = Uri.parse(BASE_URL).buildUpon()
+                .appendPath(id)
+                .appendPath(PATH_VIDEOS)
+                .appendQueryParameter(QUERY_PARAM, API_Key)
+                .appendQueryParameter(LANG_PARAM, LANG_VALUE)
+                .build();
+
+        URL url = null;
+
+        try {
+            url = new URL(builtUrl.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built URL " + url);
+        return url;
+    }
+
+    /**
+     * https://api.themoviedb.org/3/movie/19404/reviews?api_key=<<api-key>></>&language=en-US&page=1
+     *
+     * @param id
+     * @return
+     */
+
+    public static URL buildGetMovieReviewUrl(String id) {
+
+        Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+                .appendPath(id)
+                .appendPath(PATH_REVIEWS)
+                .appendQueryParameter(QUERY_PARAM, API_Key)
+                .appendQueryParameter(LANG_PARAM, LANG_VALUE)
+                .build();
+
+        URL url = null;
+
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built URL " + url);
+
         return url;
     }
 

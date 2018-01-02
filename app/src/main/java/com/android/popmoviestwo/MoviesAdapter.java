@@ -68,7 +68,11 @@ class MoviesAdapter extends ArrayAdapter<Movie> {
             }
         });
 
-        Picasso.with(getContext()).load(IMAGE_MOVIE_URL + movie.getMovieImgPath()).into(movie_thumbnail);
+        try{
+            Picasso.with(getContext()).load(IMAGE_MOVIE_URL + movie.getMovieImgPath()).error(R.drawable.user_placeholder_error).into(movie_thumbnail);
+        } catch(IllegalArgumentException e){
+            movie_thumbnail.setImageResource(R.drawable.user_placeholder_error);
+        }
 
         /**
          * Displays the textView movieTitle
