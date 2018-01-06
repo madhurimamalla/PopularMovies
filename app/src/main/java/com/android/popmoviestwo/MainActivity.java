@@ -4,14 +4,15 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.popmoviestwo.MoviesAdapter.MoviesAdapterOnClickListener;
 import com.android.popmoviestwo.utils.MoviesListJsonUtils;
 import com.android.popmoviestwo.utils.NetworkUtils;
 
@@ -22,10 +23,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapterOnClickListener {
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickListener {
 
-    private MoviesAdapter movieAdapter;
-    private GridView gridView;
+    private RecyclerView recyclerView;
+    private MoviesAdapter moviesAdapter;
     private TextView mErrorMessage;
     private ProgressBar mLoadingIcon;
     private final static String PATH_POPULAR_PARAM = "popular";
@@ -36,13 +37,17 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        gridView = (GridView) findViewById(R.id.movies_grid);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         mErrorMessage = (TextView) findViewById(R.id.error_message);
         mLoadingIcon = (ProgressBar) findViewById(R.id.loading_icon);
         new FetchMoviesList().execute(PATH_POPULAR_PARAM);
-        movieAdapter = new MoviesAdapter(this, moviesList, this);
-        gridView.setVisibility(View.VISIBLE);
-        gridView.setAdapter(movieAdapter);
+
+        moviesAdapter = new MoviesAdapter(this, moviesList, this);
+
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(moviesAdapter);
     }
 
     @Override
@@ -56,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
 
         @Override
         protected void onPreExecute() {
-            gridView.setVisibility(View.INVISIBLE);
+            recyclerView.setVisibility(View.INVISIBLE);
             mLoadingIcon.setVisibility(View.VISIBLE);
         }
 
@@ -90,12 +95,13 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapterOnCl
         protected void onPostExecute(List<Movie> mList) {
             if (mList != null) {
                 mErrorMessage.setVisibility(View.INVISIBLE);
-                gridView.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
+                mLoadingIcon.setVisibility(View.INVISIBLE);
                 moviesList.clear();
                 moviesList.addAll(mList);
-                movieAdapter.notifyDataSetChanged();
+                moviesAdapter.notifyDataSetChanged();
             } else {
-                gridView.setVisibility(View.INVISIBLE);
+                recyclerView.setVisibility(View.INVISIBLE);
                 mErrorMessage.setVisibility(View.VISIBLE);
             }
         }

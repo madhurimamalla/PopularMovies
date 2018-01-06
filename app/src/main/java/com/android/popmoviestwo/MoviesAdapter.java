@@ -1,85 +1,86 @@
 package com.android.popmoviestwo;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-class MoviesAdapter extends ArrayAdapter<Movie> {
+/**
+ * Created by mmalla on 05/01/18.
+ */
 
-    private final MoviesAdapterOnClickListener mListener;
-    /**
-     * w185 is the size of the image getting retrieved
-     */
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHolder> {
+
+    private Context mContext;
+
+    private final MoviesAdapter.MoviesAdapterOnClickListener mListener;
+
     private final String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w185//";
+
+    private List<Movie> moviesList;
 
     public interface MoviesAdapterOnClickListener{
         void onClick(Movie movie);
     }
 
-    /**
-     * This is our own custom constructor (it doesn't mirror a superclass constructor).
-     * The context is used to inflate the layout file, and the List is the data we want
-     * to populate into the lists
-     *
-     * @param moviesList
-     */
-    public MoviesAdapter(Context context, List<Movie> moviesList, MoviesAdapterOnClickListener listener) {
-        super(context ,0, moviesList);
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView movie_thumbnail;
+
+        public MyViewHolder(View view) {
+            super(view);
+            movie_thumbnail = (ImageView) view.findViewById(R.id.movie_image);
+        }
+    }
+
+    public MoviesAdapter(Context context, List<Movie> moviesList, MoviesAdapter.MoviesAdapterOnClickListener listener) {
+        this.moviesList = moviesList;
+        mContext = context;
         mListener = listener;
     }
 
-    /**
-     * Provides a view for an AdapterView (ListView, GridView, etc.)
-     *
-     * @param position    The AdapterView position that is requesting a view
-     * @param convertView The recycled view to populate.
-     *                    (search online for "android view recycling" to learn more)
-     * @param parent      The parent ViewGroup that is used for inflation.
-     * @return The View for the position in the AdapterView.
-     */
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        // Gets the Movie object from the ArrayAdapter at the appropriate position
-        Movie movie = getItem(position);
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.movie_list_row, parent, false);
 
-        if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(
-                        R.layout.movie_item, parent, false);
-        }
+        return new MyViewHolder(itemView);
+    }
 
-        /**
-         * Displays the imageView moviePoster
-         */
-        ImageView movie_thumbnail = (ImageView) convertView.findViewById(R.id.movie_image);
+    @Override
+    public void onBindViewHolder(MyViewHolder holder, final int position) {
+
+        Movie movie = moviesList.get(position);
+
+        ImageView movie_thumbnail = (ImageView) holder.movie_thumbnail.findViewById(R.id.movie_image);
+
         movie_thumbnail.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Movie movie = getItem(position);
+                Movie movie = moviesList.get(position);
                 mListener.onClick(movie);
             }
         });
 
+
         try{
-            Picasso.with(getContext()).load(IMAGE_MOVIE_URL + movie.getMovieImgPath()).error(R.drawable.user_placeholder_error).into(movie_thumbnail);
+            Picasso.with(mContext).load(IMAGE_MOVIE_URL + movie.getMovieImgPath()).error(R.drawable.user_placeholder_error).into(movie_thumbnail);
         } catch(IllegalArgumentException e){
             movie_thumbnail.setImageResource(R.drawable.user_placeholder_error);
         }
 
-        /**
-         * Displays the textView movieTitle
-         */
-        TextView movieTitle = (TextView) convertView.findViewById(R.id.movie_title);
-        movieTitle.setText(movie.getMovieTitle());
+    }
 
-        return convertView;
+    @Override
+    public int getItemCount() {
+        return moviesList.size();
     }
 }

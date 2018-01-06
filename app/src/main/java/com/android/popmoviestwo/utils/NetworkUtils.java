@@ -40,9 +40,9 @@ public class NetworkUtils {
 
    /* */
     /**
-     * TODO Add your API Key here before running the code
+     * TODO Add your key here before running the code
      */
-    final static String API_Key = "<<Insert API Key here>>";
+    final static String API_Key = "<<Insert your API key here>>";
 
     public static URL buildUrl(String path) {
 
