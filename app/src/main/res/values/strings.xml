@@ -10,4 +10,7 @@
     <string name="rating_label">Rating:</string>
     <string name="overview_label">Overview:</string>
     <string name="review_label">Review:</string>
+    <string name="content_authority">com.android.popmoviestwo</string>
+    <string name="mark_as_favorite">Mark as favorite</string>
+    <string name="show_my_favorites">Show my favorites</string>
 </resources>

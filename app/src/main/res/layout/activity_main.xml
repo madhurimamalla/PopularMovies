@@ -3,28 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.android.popmoviestwo.MainActivity">
+
     <TextView
+        android:id="@+id/error_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/error_message"
         android:text="@string/error_message"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
+
     <ProgressBar
+        android:id="@+id/loading_icon"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/loading_icon"
         android:layout_gravity="center"
-        android:visibility="invisible"/>
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/movies_grid"
+        android:visibility="invisible" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:columnWidth="150dp"
-        android:horizontalSpacing="0dp"
+        android:layout_height="wrap_content"
         android:numColumns="auto_fit"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="0dp"
-        android:padding="5dp"
-        tools:context=".MainActivityFragment"></GridView>
+        android:scrollbars="vertical" />
 </FrameLayout>
