@@ -1,8 +1,13 @@
 package com.android.popmoviestwo;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,6 +18,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.popmoviestwo.data.MovieContract;
 import com.android.popmoviestwo.utils.MoviesListJsonUtils;
 import com.android.popmoviestwo.utils.NetworkUtils;
 
@@ -23,31 +29,83 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickListener {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.MoviesAdapterOnClickListener {
 
     private RecyclerView recyclerView;
     private MoviesAdapter moviesAdapter;
+    private FavMoviesAdapter favMoviesAdapter;
     private TextView mErrorMessage;
     private ProgressBar mLoadingIcon;
+    private boolean fav_flag = false;
     private final static String PATH_POPULAR_PARAM = "popular";
     private final static String PATH_TOP_RATED_PARAM = "top_rated";
-    private List<Movie> moviesList = new ArrayList<>();
+
+    private final String TAG = MainActivity.class.getSimpleName();
+
+    private ArrayList<Movie> moviesList = new ArrayList<>();
+
+    /*
+    * The columns of data that we are interested in displaying within our MainActivity's list of
+    * movie data.
+    */
+    public static final String[] MAIN_MOVIE_PROJECTION = {
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_TITLE,
+            MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE_PATH,
+            MovieContract.MovieEntry.COLUMN_FAVORITE
+    };
+
+    public static final int INDEX_MOVIE_IMG = 2;
+
+    private static final int ID_MOVIE_LOADER = 77;
+
+
+    public void showLoading() {
+        recyclerView.setVisibility(View.INVISIBLE);
+        mLoadingIcon.setVisibility(View.VISIBLE);
+    }
+
+    public void showMovieThumbnails() {
+        mLoadingIcon.setVisibility(View.INVISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         mErrorMessage = (TextView) findViewById(R.id.error_message);
         mLoadingIcon = (ProgressBar) findViewById(R.id.loading_icon);
-        new FetchMoviesList().execute(PATH_POPULAR_PARAM);
 
-        moviesAdapter = new MoviesAdapter(this, moviesList, this);
+        if (fav_flag == true) {
+            if (getSupportLoaderManager().getLoader(ID_MOVIE_LOADER) == null) {
+                getSupportLoaderManager().initLoader(ID_MOVIE_LOADER, null, this);
+            } else {
+                getSupportLoaderManager().restartLoader(ID_MOVIE_LOADER, null, this);
+            }
+        } else {
+            if (savedInstanceState == null || !savedInstanceState.containsKey("movie_list")) {
+                new FetchMoviesList().execute(PATH_POPULAR_PARAM);
+                showGeneralMovieLists();
+            } else {
+                moviesList = savedInstanceState.getParcelableArrayList("movie_list");
+                showGeneralMovieLists();
+            }
+        }
+    }
 
+    public void showGeneralMovieLists() {
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        favMoviesAdapter = new FavMoviesAdapter(this);
+        moviesAdapter = new MoviesAdapter(this, moviesList, this);
         recyclerView.setAdapter(moviesAdapter);
+        showMovieThumbnails();
     }
 
     @Override
@@ -77,10 +135,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             /**
              * Get the URL to fetch the Popular movies
              */
-            URL moviesPopularUrl = NetworkUtils.buildUrl(path);
+            URL moviesListUrl = NetworkUtils.buildUrl(path);
 
             try {
-                String jsonPopularMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesPopularUrl);
+                String jsonPopularMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesListUrl);
                 return MoviesListJsonUtils.getSimpleMoviesInformationFromJson(jsonPopularMoviesResponse);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -95,18 +153,15 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         protected void onPostExecute(List<Movie> mList) {
             if (mList != null) {
                 mErrorMessage.setVisibility(View.INVISIBLE);
-                recyclerView.setVisibility(View.VISIBLE);
-                mLoadingIcon.setVisibility(View.INVISIBLE);
+                showMovieThumbnails();
                 moviesList.clear();
                 moviesList.addAll(mList);
                 moviesAdapter.notifyDataSetChanged();
             } else {
-                recyclerView.setVisibility(View.INVISIBLE);
-                mErrorMessage.setVisibility(View.VISIBLE);
+                showLoading();
             }
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -119,13 +174,72 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         int id = item.getItemId();
 
         if (id == R.id.action_sort_by_top_rated) {
+            fav_flag = false;
+            getSupportLoaderManager().destroyLoader(ID_MOVIE_LOADER);
             new FetchMoviesList().execute(PATH_TOP_RATED_PARAM);
+            showGeneralMovieLists();
             return true;
         }
         if (id == R.id.action_sort_by_popular) {
+            fav_flag = false;
+            getSupportLoaderManager().destroyLoader(ID_MOVIE_LOADER);
             new FetchMoviesList().execute(PATH_POPULAR_PARAM);
+            showGeneralMovieLists();
+            return true;
+        }
+        if (id == R.id.favorites_list) {
+            fav_flag = true;
+            displayFavoriteThumbnails();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case ID_MOVIE_LOADER:
+                Uri favMoviesList = MovieContract.MovieEntry.CONTENT_URI;
+                //TODO Remove this below line later
+                LoaderManager.enableDebugLogging(true);
+                String selectionArgs = MovieContract.MovieEntry.COLUMN_FAVORITE + " = 1";
+
+                CursorLoader cursorLoader = new CursorLoader(this,
+                        favMoviesList,
+                        MAIN_MOVIE_PROJECTION,
+                        selectionArgs,
+                        null,
+                        null);
+                return cursorLoader;
+
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + id);
+        }
+    }
+
+    @Override
+    public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
+        moviesList.clear();
+        int position = 0;
+        recyclerView.setAdapter(favMoviesAdapter);
+        favMoviesAdapter.swapCursor(data);
+        if (data.getPosition() == RecyclerView.NO_POSITION) position = 0;
+        recyclerView.smoothScrollToPosition(position);
+        if (data.getCount() != 0) showMovieThumbnails();
+    }
+
+    @Override
+    public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
+        favMoviesAdapter.swapCursor(null);
+    }
+
+    public void displayFavoriteThumbnails() {
+        getSupportLoaderManager().initLoader(ID_MOVIE_LOADER, null, this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("movie_list", moviesList);
+        super.onSaveInstanceState(outState);
     }
 }

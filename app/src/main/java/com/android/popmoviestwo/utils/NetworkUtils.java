@@ -1,7 +1,13 @@
 package com.android.popmoviestwo.utils;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
+
+import com.android.popmoviestwo.data.MovieContract;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,9 +46,9 @@ public class NetworkUtils {
 
    /* */
     /**
-     * TODO Add your key here before running the code
+     * TODO Remove your API Key here before checking in the code
      */
-    final static String API_Key = "<<Insert your API key here>>";
+    final static String API_Key = "<<INSERT API KEY here>>";
 
     public static URL buildUrl(String path) {
 
@@ -164,5 +170,28 @@ public class NetworkUtils {
         } finally {
             urlConnection.disconnect();
         }
+    }
+
+   synchronized public static void addInformationToContentProvider(final Context context, final String path) throws Exception{
+
+       Thread newThread = new Thread(new Runnable(){
+           @Override
+           public void run() {
+               ContentResolver movieContentResolver = context.getContentResolver();
+               try {
+                   URL moviesListUrl = NetworkUtils.buildUrl(path);
+                   String jsonPopularMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesListUrl);
+                   ContentValues[] contentValues = MoviesListJsonUtils.getMovieContentValuesFromJson(jsonPopularMoviesResponse);
+                   if (contentValues != null && contentValues.length != 0) {
+                       movieContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI, null, null);
+                       movieContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
+                   }
+               }catch (Exception e){
+                   e.printStackTrace();
+               }
+           }
+       });
+       newThread.start();
+       //newThread.join();
     }
 }

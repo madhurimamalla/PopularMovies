@@ -4,6 +4,10 @@ package com.android.popmoviestwo.utils;
  * Created by mmalla on 01/01/18.
  */
 
+import android.content.ContentValues;
+
+import com.android.popmoviestwo.data.MovieContract;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,11 +23,11 @@ import java.util.List;
  */
 public class MovieReviewsJsonUtils {
 
+    public final static String MR_REVIEW_CONTENT = "content";
+
+    public final static String MR_RESULTS = "results";
+
     public static List<String> getMovieReviewsFromJson(String reviewsJsonStr) throws JSONException{
-
-        final String MR_REVIEW_CONTENT = "content";
-
-        final String MR_RESULTS = "results";
 
         List<String> reviewList = new ArrayList<String>();
 
@@ -49,5 +53,19 @@ public class MovieReviewsJsonUtils {
             reviewList.add(i, review_content);
         }
         return reviewList;
+    }
+
+    public static ContentValues[] getMovieReviewContentValuesFromJson(String reviewsJsonStr, ContentValues[] contentValues) throws JSONException{
+
+        JSONObject moviewReviewsObj = new JSONObject(reviewsJsonStr);
+
+        JSONArray reviewResultsArr = moviewReviewsObj.getJSONArray(MR_RESULTS);
+
+        for(int i = 0; i < contentValues.length; i++){
+            if(contentValues[i].containsKey(MovieContract.MovieEntry.COLUMN_MOVIE_ID)){
+            }
+        }
+
+        return null;
     }
 }

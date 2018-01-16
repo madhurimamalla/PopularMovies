@@ -1,12 +1,15 @@
 package com.android.popmoviestwo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
  * Created by mmalla on 25/10/17.
  */
 
-public class Movie {
+public class Movie implements Parcelable{
 
     private String movieTitle;
     private String movieImgPath;
@@ -36,6 +39,15 @@ public class Movie {
         this.movieTitle = name;
         this.movieImgPath = movieImgPath;
         this.movieId = movieId;
+    }
+
+    public Movie(Parcel source) {
+        movieTitle = source.readString();
+        movieId = source.readString();
+        movieImgPath = source.readString();
+        releaseDate = source.readString();
+        overview = source.readString();
+        userRating = source.readString();
     }
 
     public String getMovieTitle() {
@@ -101,4 +113,35 @@ public class Movie {
     public void setMovieTrailerList(List<String> movieTrailerList) {
         this.movieTrailerList = movieTrailerList;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(movieTitle);
+        dest.writeString(movieId);
+        dest.writeString(movieImgPath);
+        dest.writeString(releaseDate);
+        dest.writeString(overview);
+        dest.writeString(userRating);
+//        dest.writeList(moviereviewsList);
+//        dest.writeList(movieTrailerList);
+    }
+
+    public final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+
+        @Override
+        public Movie createFromParcel(Parcel source) {
+            return new Movie(source);
+        }
+
+        @Override
+        public Movie[] newArray(int i) {
+            return new Movie[i];
+        }
+
+    };
 }

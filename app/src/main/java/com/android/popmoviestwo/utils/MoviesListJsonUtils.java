@@ -4,7 +4,12 @@ package com.android.popmoviestwo.utils;
  * Created by mmalla on 23/10/17.
  */
 
+import android.content.ContentProvider;
+import android.content.ContentValues;
+import android.content.Context;
+
 import com.android.popmoviestwo.Movie;
+import com.android.popmoviestwo.data.MovieContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,15 +25,15 @@ import java.util.List;
  */
 public class MoviesListJsonUtils {
 
+    public static final String PM_RESULTS = "results";
+
+    public static final String PM_MOVIE_ID = "id";
+
+    public static final String PM_MOVIE_TITLE = "title";
+
+    public static final String PM_IMG_PATH = "poster_path";
+
     public static List<Movie> getSimpleMoviesInformationFromJson(String moviesJsonStr) throws JSONException {
-
-        final String PM_RESULTS = "results";
-
-        final String PM_MOVIE_ID = "id";
-
-        final String PM_MOVIE_TITLE = "title";
-
-        final String PM_IMG_PATH = "poster_path";
 
         List<Movie> parsedMovieResults = null;
 
@@ -48,5 +53,28 @@ public class MoviesListJsonUtils {
             parsedMovieResults.add(movie_object);
         }
         return parsedMovieResults;
+    }
+
+    public static ContentValues[] getMovieContentValuesFromJson(String moviesJsonStr) throws JSONException{
+
+        JSONObject movieJson = new JSONObject(moviesJsonStr);
+
+        JSONArray movielistArray = movieJson.getJSONArray(PM_RESULTS);
+
+        ContentValues[] movielistValues = new ContentValues[movielistArray.length()];
+
+        for(int i = 0; i < movielistArray.length(); i++){
+
+            JSONObject movieData = movielistArray.getJSONObject(i);
+
+            ContentValues movieContentValue = new ContentValues();
+
+            movieContentValue.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movieData.getString(PM_MOVIE_ID));
+            movieContentValue.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movieData.getString(PM_MOVIE_TITLE));
+            movieContentValue.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE_PATH, movieData.getString(PM_IMG_PATH));
+            movieContentValue.put(MovieContract.MovieEntry.COLUMN_FAVORITE, false);
+            movielistValues[i] = movieContentValue;
+        }
+        return movielistValues;
     }
 }

@@ -4,4 +4,11 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="row_padding_vertical">10dp</dimen>
+
+    <dimen name="recyclerview_item_horizontal_margin">5dp</dimen>
+    <dimen name="recyclerview_item_vertical_margin">5dp</dimen>
+    <dimen name="elements_on_detailspage_margin">8dp</dimen>
+    <dimen name="elements_on_detailspage_padding">10dp</dimen>
+    <dimen name="movie_title_on_detailspage_padding">70dp</dimen>
+    <dimen name="movie_title_on_detailspage_padding_landscape">25dp</dimen>
 </resources>

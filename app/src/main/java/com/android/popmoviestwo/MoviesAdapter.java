@@ -1,6 +1,11 @@
 package com.android.popmoviestwo;
 
 import android.content.Context;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +62,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-
         Movie movie = moviesList.get(position);
 
         ImageView movie_thumbnail = (ImageView) holder.movie_thumbnail.findViewById(R.id.movie_image);
@@ -70,13 +74,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
             }
         });
 
-
         try{
             Picasso.with(mContext).load(IMAGE_MOVIE_URL + movie.getMovieImgPath()).error(R.drawable.user_placeholder_error).into(movie_thumbnail);
         } catch(IllegalArgumentException e){
             movie_thumbnail.setImageResource(R.drawable.user_placeholder_error);
         }
-
     }
 
     @Override

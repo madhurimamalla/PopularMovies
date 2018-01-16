@@ -56,8 +56,10 @@ public class MovieDetailsJsonUtils {
         String movieTitle = movieJson.getString(PM_MOVIE_TITLE);
         String movieImgPath = movieJson.getString(PM_IMG_PATH);
         String userRating = movieJson.getString(PM_VOTE_AVG);
+        String movieId = movieJson.getString(PM_MOVIE_ID);
 
         parsedMovieDetails.setMovieTitle(movieTitle);
+        parsedMovieDetails.setMovieId(movieId);
         parsedMovieDetails.setReleaseDate(releaseDate);
         parsedMovieDetails.setMovieImgPath(movieImgPath);
         parsedMovieDetails.setOverview(overview);
