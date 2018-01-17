@@ -1,6 +1,6 @@
 package com.android.popmoviestwo;
 
-import android.content.ActivityNotFoundException;
+import android.app.ActionBar;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.app.ActionBarActivity;
 
 import com.android.popmoviestwo.data.MovieContract;
 import com.android.popmoviestwo.utils.MovieDetailsJsonUtils;
@@ -66,6 +67,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailersA
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.getSupportActionBar().setDisplayShowHomeEnabled(true);
         setContentView(R.layout.movie_details_activity);
 
         movieTitle = (TextView) findViewById(R.id.movie_orig_title);
@@ -147,11 +149,13 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailersA
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse(BROWSER_CONSTRUCT + id));
         webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        try {
-            getApplicationContext().startActivity(appIntent);
-        } catch (ActivityNotFoundException ex) {
-            ex.printStackTrace();
-            getApplicationContext().startActivity(webIntent);
+
+        if (appIntent.resolveActivity(getPackageManager()) != null) {
+            // Open Youtube client
+            startActivity(appIntent);
+        } else {
+            // Default to Web browser
+            startActivity(webIntent);
         }
     }
 
@@ -232,8 +236,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailersA
          */
         showReviews();
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerViewTrailers.setLayoutManager(layoutManager);
+        LinearLayoutManager horizontalLayoutManagaer = new LinearLayoutManager(MovieDetailsActivity.this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewTrailers.setLayoutManager(horizontalLayoutManagaer);
         recyclerViewTrailers.setItemAnimator(new DefaultItemAnimator());
         trailersAdapter = new TrailersAdapter(this, movie.getMovieTrailerList(), this);
         recyclerViewTrailers.setAdapter(trailersAdapter);

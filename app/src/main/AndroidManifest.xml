@@ -14,20 +14,22 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".MovieDetailsActivity"
-            android:label="@string/title_activity_movie_details"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:label="@string/title_activity_movie_details">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
 
         <!-- Our ContentProvider -->
         <provider
             android:name=".data.MovieProvider"
             android:authorities="@string/content_authority"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>

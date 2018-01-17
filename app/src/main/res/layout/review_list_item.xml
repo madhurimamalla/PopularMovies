@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="20dp"
     xmlns:tools="http://schemas.android.com/tools">
     <TextView
         android:id="@+id/review_item"
@@ -10,6 +11,7 @@
         android:fontFamily="sans-serif"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/secondaryTextColor"
+        android:layout_marginBottom="20dp"
         android:padding="@dimen/elements_on_detailspage_padding"
         tools:text="'The Matrix' is a visually dazzling cyberadventure, full of kinetic excitement, but it retreats to formula just when it's getting interesting. It's kind of a letdown when a movie begins by redefining the nature of reality, and ends with a shoot-out. We want a leap of the imagination, not one of those obligatory climaxes with automatic weapons fire."/>
 </RelativeLayout>

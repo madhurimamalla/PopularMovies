@@ -1,11 +1,15 @@
 package com.android.popmoviestwo;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -40,9 +44,19 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.MyTrai
 
     @Override
     public void onBindViewHolder(final MyTrailerViewHolder holder, final int position) {
-        TextView trailerTextView = (TextView) holder.trailerTextView.findViewById(R.id.trailer_item);
-        trailerTextView.setText("View Trailer" + " " + (holder.getAdapterPosition() + 1));
-        trailerTextView.setOnClickListener(new View.OnClickListener() {
+
+        ImageView trailerImg = (ImageView) holder.trailerImg.findViewById(R.id.trailerImg);
+
+        String id = trailersList.get(holder.getAdapterPosition());
+
+        try {
+            String IMG_STR_CONSTRUCT = "https://img.youtube.com/vi/";
+            Picasso.with(mContext).load(IMG_STR_CONSTRUCT + id + "/0.jpg").error(R.drawable.user_placeholder_error).into(trailerImg);
+        } catch (IllegalArgumentException e) {
+            trailerImg.setImageResource(R.drawable.user_placeholder_error);
+        }
+
+        trailerImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String trailerStr = trailersList.get(holder.getAdapterPosition());
@@ -58,11 +72,11 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.MyTrai
 
     public class MyTrailerViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView trailerTextView;
+        public ImageView trailerImg;
 
         public MyTrailerViewHolder(View itemView) {
             super(itemView);
-            trailerTextView = (TextView) itemView.findViewById(R.id.trailer_item);
+            trailerImg = (ImageView) itemView.findViewById(R.id.trailerImg);
         }
     }
 

@@ -134,8 +134,8 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_trailers"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/details_recyclerview_marginTop"
         android:numColumns="auto_fit"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -147,6 +147,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/details_recyclerview_marginTop"
+        android:layout_marginBottom="20dp"
         android:numColumns="auto_fit"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"

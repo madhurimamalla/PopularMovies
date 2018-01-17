@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -99,7 +100,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void showGeneralMovieLists() {
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        /**
+         * This is to automatically decide based on the width of the device how many noOfColumns are
+         * possible in one row for the display of movie thumbnails
+         */
+        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int scalingFactor = 180;
+        int noOfColumns = (int) (dpWidth / scalingFactor);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), noOfColumns);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         favMoviesAdapter = new FavMoviesAdapter(this, this);
@@ -227,7 +236,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
         moviesList.clear();
         int position = 0;
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int scalingFactor = 180;
+        int noOfColumns = (int) (dpWidth / scalingFactor);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), noOfColumns);
         recyclerView.setLayoutManager(mLayoutManager);
         favMoviesAdapter = new FavMoviesAdapter(this, this);
         recyclerView.setAdapter(favMoviesAdapter);
