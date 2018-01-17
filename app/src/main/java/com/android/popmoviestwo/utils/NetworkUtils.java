@@ -46,9 +46,9 @@ public class NetworkUtils {
 
    /* */
     /**
-     * TODO Remove your API Key here before checking in the code
+     * TODO Add your API key here
      */
-    final static String API_Key = "<<INSERT API KEY here>>";
+    private final static String API_Key = "<<Insert your API key here>>";
 
     public static URL buildUrl(String path) {
 
@@ -170,28 +170,5 @@ public class NetworkUtils {
         } finally {
             urlConnection.disconnect();
         }
-    }
-
-   synchronized public static void addInformationToContentProvider(final Context context, final String path) throws Exception{
-
-       Thread newThread = new Thread(new Runnable(){
-           @Override
-           public void run() {
-               ContentResolver movieContentResolver = context.getContentResolver();
-               try {
-                   URL moviesListUrl = NetworkUtils.buildUrl(path);
-                   String jsonPopularMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesListUrl);
-                   ContentValues[] contentValues = MoviesListJsonUtils.getMovieContentValuesFromJson(jsonPopularMoviesResponse);
-                   if (contentValues != null && contentValues.length != 0) {
-                       movieContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI, null, null);
-                       movieContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
-                   }
-               }catch (Exception e){
-                   e.printStackTrace();
-               }
-           }
-       });
-       newThread.start();
-       //newThread.join();
     }
 }

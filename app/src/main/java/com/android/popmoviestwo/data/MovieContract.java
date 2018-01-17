@@ -48,22 +48,5 @@ public class MovieContract {
 
         public static final String COLUMN_FAVORITE = "favorite";
 
-        /**
-         * Description: URI for getting the movie
-         * @param id
-         * @return
-         */
-        public static Uri buildMovieUriWithId(String id){
-            return CONTENT_URI.buildUpon().appendPath(id).build();
-        }
-
-        /**
-         * Description: URI for getting the fav movies
-         * @return
-         */
-        public static Uri buildUriWithMovieFavs(){
-            return CONTENT_URI.buildUpon().appendPath("fav").build();
-        }
-
     }
 }

@@ -25,17 +25,17 @@ import java.util.List;
  */
 public class MoviesListJsonUtils {
 
-    public static final String PM_RESULTS = "results";
+    private static final String PM_RESULTS = "results";
 
-    public static final String PM_MOVIE_ID = "id";
+    private static final String PM_MOVIE_ID = "id";
 
-    public static final String PM_MOVIE_TITLE = "title";
+    private static final String PM_MOVIE_TITLE = "title";
 
-    public static final String PM_IMG_PATH = "poster_path";
+    private static final String PM_IMG_PATH = "poster_path";
 
     public static List<Movie> getSimpleMoviesInformationFromJson(String moviesJsonStr) throws JSONException {
 
-        List<Movie> parsedMovieResults = null;
+        List<Movie> parsedMovieResults;
 
         JSONObject movieJson = new JSONObject(moviesJsonStr);
 
