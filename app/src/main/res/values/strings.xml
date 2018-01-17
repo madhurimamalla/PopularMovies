@@ -5,12 +5,9 @@
     <string name="error_message">Some error has occurred. Try after sometime</string>
     <string name="title_activity_movie_details">Movie Details</string>
     <string name="content_description">Movie Poster</string>
-    <string name="trailer_label">Trailer:</string>
-    <string name="release_date_label">Release date:</string>
-    <string name="rating_label">Rating:</string>
-    <string name="overview_label">Overview:</string>
-    <string name="review_label">Review:</string>
     <string name="content_authority">com.android.popmoviestwo</string>
     <string name="mark_as_favorite">Mark as favorite</string>
     <string name="show_my_favorites">Show my favorites</string>
+    <string name="click_on_trailers_to_view_them">Click on Trailers to view them</string>
+    <string name="movie_thumbnail">Movie thumbnail</string>
 </resources>

@@ -19,13 +19,12 @@ import java.util.List;
  * Description: This class is created to assist in parsing and understanding the JSON response given by the 'GET reviews' API of TMDB
  * This class is used to gather the reviews given to a movie
  *
- * TODO Probably need to implement a content provider and then add this data to that content provider instead of writing to the movie object
  */
 public class MovieReviewsJsonUtils {
 
-    public final static String MR_REVIEW_CONTENT = "content";
+    private final static String MR_REVIEW_CONTENT = "content";
 
-    public final static String MR_RESULTS = "results";
+    private final static String MR_RESULTS = "results";
 
     public static List<String> getMovieReviewsFromJson(String reviewsJsonStr) throws JSONException{
 
@@ -53,19 +52,5 @@ public class MovieReviewsJsonUtils {
             reviewList.add(i, review_content);
         }
         return reviewList;
-    }
-
-    public static ContentValues[] getMovieReviewContentValuesFromJson(String reviewsJsonStr, ContentValues[] contentValues) throws JSONException{
-
-        JSONObject moviewReviewsObj = new JSONObject(reviewsJsonStr);
-
-        JSONArray reviewResultsArr = moviewReviewsObj.getJSONArray(MR_RESULTS);
-
-        for(int i = 0; i < contentValues.length; i++){
-            if(contentValues[i].containsKey(MovieContract.MovieEntry.COLUMN_MOVIE_ID)){
-            }
-        }
-
-        return null;
     }
 }

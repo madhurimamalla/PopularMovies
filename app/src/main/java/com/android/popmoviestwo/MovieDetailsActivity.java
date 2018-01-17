@@ -6,16 +6,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +30,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.net.URL;
 
-public class MovieDetailsActivity extends AppCompatActivity {
+public class MovieDetailsActivity extends AppCompatActivity implements TrailersAdapter.TrailerAdapterOnClickListener {
 
     private Movie movie;
     private TextView movieTitle;
@@ -39,27 +38,29 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private TextView movieReleaseDate;
     private TextView movieOverview;
     private TextView movieUserRating;
-    private TextView movieVideoTrailer;
     private TextView mFavButton;
 
     private RecyclerView recyclerViewReviews;
+    private RecyclerView recyclerViewTrailers;
+    private TrailersAdapter trailersAdapter;
     private ReviewsAdapter reviewsAdapter;
 
+    private String mTrailerSummary;
     private String YOUTUBE_CONSTRUCT = "vnd.youtube:";
     private String BROWSER_CONSTRUCT = "http://www.youtube.com/watch?v=";
     private String RATING_OUT_OF_TEN = "/10";
-    private String youtube_id;
+    private final String POPMOVIES_SHARE_HASHTAG = "#PopMovies";
     private final String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w500//";
     private String SAVE_INSTANCE_KEY = "movie_detail";
 
     private String TAG = MovieDetailsActivity.class.getSimpleName();
 
-    public void showReviews(){
+    private void showReviews() {
         recyclerViewReviews.setVisibility(View.VISIBLE);
     }
 
-    public void hideReviews(){
-        recyclerViewReviews.setVisibility(View.INVISIBLE);
+    private void showTrailers() {
+        recyclerViewTrailers.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -73,29 +74,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
         movieReleaseDate = (TextView) findViewById(R.id.movie_release_date);
         movieUserRating = (TextView) findViewById(R.id.movie_user_rating);
         mFavButton = (TextView) findViewById(R.id.mark_as_favorite);
-        movieVideoTrailer = (TextView) findViewById(R.id.video_trailer_link);
         recyclerViewReviews = (RecyclerView) findViewById(R.id.recyclerview_reviews);
-
-        /**
-         * Creating an OnClickListener so it opens a Youtube app or a browser on clicking a movie Video Trailer TextView element
-         */
-        movieVideoTrailer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String id = youtube_id;
-                Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_CONSTRUCT + id));
-                appIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(BROWSER_CONSTRUCT + id));
-                webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                try {
-                    getApplicationContext().startActivity(appIntent);
-                } catch (ActivityNotFoundException ex) {
-                    ex.printStackTrace();
-                    getApplicationContext().startActivity(webIntent);
-                }
-            }
-        });
+        recyclerViewTrailers = (RecyclerView) findViewById(R.id.recyclerview_trailers);
 
         /**
          * Creating an onClickListener so it adds this particular movie to the user's list of favorite movies
@@ -123,10 +103,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 ContentValues[] contentValuesList = new ContentValues[1];
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(MovieContract.MovieEntry.COLUMN_FAVORITE, true);
-                Log.v(TAG, "Movie id: " + movie.getMovieId());
                 contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getMovieId());
                 contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE_PATH, movie.getMovieImgPath());
-                Log.v(TAG, "Movie title: " + movie.getMovieTitle());
                 contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getMovieTitle());
                 contentValuesList[0] = contentValues;
                 return getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI, contentValuesList);
@@ -143,17 +121,41 @@ public class MovieDetailsActivity extends AppCompatActivity {
             new FetchMovieDetails().execute(movieId);
         }
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent shareIntent = createShareTrailerIntent();
+                startActivity(shareIntent);
+            }
+        });
     }
 
-    public class FetchMovieDetails extends AsyncTask<String, Void, Movie> {
+    private Intent createShareTrailerIntent() {
+        Intent shareIntent = ShareCompat.IntentBuilder.from(this)
+                .setType("text/plain")
+                .setText(mTrailerSummary + " " + POPMOVIES_SHARE_HASHTAG)
+                .getIntent();
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        return shareIntent;
+    }
+
+    @Override
+    public void onClick(String id) {
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_CONSTRUCT + id));
+        appIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(BROWSER_CONSTRUCT + id));
+        webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            getApplicationContext().startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            ex.printStackTrace();
+            getApplicationContext().startActivity(webIntent);
+        }
+    }
+
+    private class FetchMovieDetails extends AsyncTask<String, Void, Movie> {
 
         @Override
         protected void onPreExecute() {
@@ -218,7 +220,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public void displayMovieDetails(Movie movie) {
+    private void displayMovieDetails(Movie movie) {
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerViewReviews.setLayoutManager(mLayoutManager);
@@ -229,6 +231,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
          * Takes care of showing the reviews
          */
         showReviews();
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerViewTrailers.setLayoutManager(layoutManager);
+        recyclerViewTrailers.setItemAnimator(new DefaultItemAnimator());
+        trailersAdapter = new TrailersAdapter(this, movie.getMovieTrailerList(), this);
+        recyclerViewTrailers.setAdapter(trailersAdapter);
+        /**
+         * Shows the trailers
+         */
+        showTrailers();
 
         movieTitle.setText(movie.getMovieTitle());
         try {
@@ -245,10 +257,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
         /**
          * Display the User rating
          */
-        movieUserRating.setText(movie.getUserRating() + RATING_OUT_OF_TEN);
-        youtube_id = movie.getMovieTrailerList().get(0);
-        movieVideoTrailer.setText("View Trailer");
+        movieUserRating.setText(String.format("%s%s", movie.getUserRating(), RATING_OUT_OF_TEN));
+        /**
+         * Prepare the mTrailerSummary in case the user wants to share it!
+         */
+        mTrailerSummary = "Trailer of " + movie.getMovieTitle() + " " + BROWSER_CONSTRUCT + movie.getMovieTrailerList().get(0);
     }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

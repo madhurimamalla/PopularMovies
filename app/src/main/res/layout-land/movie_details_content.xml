@@ -31,6 +31,7 @@
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
+        android:contentDescription="@string/movie_thumbnail"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/movie_orig_title"
         app:srcCompat="@android:drawable/btn_star_big_on" />
@@ -64,7 +65,7 @@
         android:layout_marginTop="24dp"
         android:padding="@dimen/elements_on_detailspage_padding"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintBottom_toTopOf="@+id/video_trailer_link"
+        app:layout_constraintBottom_toTopOf="@+id/video_trailer_label"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toRightOf="@+id/movie_image"
         app:layout_constraintRight_toLeftOf="@+id/movie_overview"
@@ -77,7 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/elements_on_detailspage_margin"
-        android:layout_marginRight="6dp"
+        android:layout_marginRight="@dimen/elements_on_detailspage_margin"
         android:layout_marginStart="@dimen/elements_on_detailspage_margin"
         android:layout_marginTop="0dp"
         android:background="@color/colorPrimaryLight"
@@ -108,7 +109,7 @@
         tools:text="It's seen dozens if not hundreds of these exercises in violence, which recycle the same tired ideas: Bad guys fire thousands of rounds, but are unable to hit the good guy. Then it's down to the final showdown between good and evil--a martial arts battle in which the good guy gets pounded until he's almost dead,  " />
 
     <TextView
-        android:id="@+id/video_trailer_link"
+        android:id="@+id/video_trailer_label"
         android:layout_width="200dp"
         android:layout_height="40dp"
         android:layout_marginEnd="@dimen/elements_on_detailspage_margin"
@@ -118,6 +119,7 @@
         android:layout_marginTop="16dp"
         android:background="@color/colorPrimaryLight"
         android:padding="@dimen/elements_on_detailspage_padding"
+        android:text="@string/click_on_trailers_to_view_them"
         android:textAlignment="center"
         app:layout_constraintHorizontal_bias="0.02"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -126,16 +128,39 @@
         tools:text="Video link" />
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_trailers"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/details_recyclerview_marginTop"
+        android:numColumns="auto_fit"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/video_trailer_label" />
+
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_reviews"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/details_recyclerview_marginTop"
         android:numColumns="auto_fit"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/video_trailer_link" />
+        app:layout_constraintTop_toBottomOf="@+id/recyclerview_trailers" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/elements_on_detailspage_margin"
+        android:layout_marginStart="@dimen/elements_on_detailspage_margin"
+        android:layout_marginTop="@dimen/elements_on_detailspage_margin"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_share" />
 
 </android.support.constraint.ConstraintLayout>

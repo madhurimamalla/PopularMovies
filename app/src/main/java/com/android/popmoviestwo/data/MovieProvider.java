@@ -20,15 +20,14 @@ import com.android.popmoviestwo.data.MovieContract.MovieEntry;
 
 public class MovieProvider extends ContentProvider {
 
-    public static final int CODE_MOVIE = 100;
-    public static final int CODE_MOVIE_FAVORITES_LIST = 101;
-    public static final int CODE_MOVIE_DETAIL = 102;
-    public static final int CODE_MOVIE_FAV_MOVIE = 103;
+    private static final int CODE_MOVIE = 100;
+    private static final int CODE_MOVIE_FAVORITES_LIST = 101;
+    private static final int CODE_MOVIE_FAV_MOVIE = 103;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MovieDbHelper movieDbHelper;
 
-    public static UriMatcher buildUriMatcher() {
+    private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MovieContract.CONTENT_AUTHORITY;
         matcher.addURI(authority, MovieContract.PATH_MOVIE, CODE_MOVIE);
@@ -47,7 +46,7 @@ public class MovieProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
 
-        Cursor cursor = null;
+        Cursor cursor;
 
         switch (sUriMatcher.match(uri)) {
             case CODE_MOVIE:
@@ -59,33 +58,6 @@ public class MovieProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
-
-//            case CODE_MOVIE_DETAIL:
-//
-//                String movie_id = uri.getLastPathSegment();
-//
-//                String[] selectionArguments = new String[]{movie_id};
-//
-//                cursor = movieDbHelper.getReadableDatabase().query(MovieEntry.TABLE_NAME,
-//                        projection,
-//                        selection,
-//                        selectionArguments,
-//                        null,
-//                        null,
-//                        sortOrder);
-//                break;
-//
-//            case CODE_MOVIE_FAVORITES_LIST:
-//                String where = MovieEntry.COLUMN_FAVORITE + " = true";
-//
-//                cursor = movieDbHelper.getReadableDatabase().query(MovieEntry.TABLE_NAME,
-//                        projection,
-//                        selection,
-//                        selectionArgs,
-//                        null,
-//                        where,
-//                        sortOrder);
-//                break;
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

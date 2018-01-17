@@ -26,8 +26,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 
     private final MoviesAdapter.MoviesAdapterOnClickListener mListener;
 
-    private final String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w185//";
-
     private List<Movie> moviesList;
 
     public interface MoviesAdapterOnClickListener{
@@ -62,7 +60,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        Movie movie = moviesList.get(position);
+        Movie movie = moviesList.get(holder.getAdapterPosition());
 
         ImageView movie_thumbnail = (ImageView) holder.movie_thumbnail.findViewById(R.id.movie_image);
 
@@ -75,6 +73,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
         });
 
         try{
+            String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w185//";
             Picasso.with(mContext).load(IMAGE_MOVIE_URL + movie.getMovieImgPath()).error(R.drawable.user_placeholder_error).into(movie_thumbnail);
         } catch(IllegalArgumentException e){
             movie_thumbnail.setImageResource(R.drawable.user_placeholder_error);

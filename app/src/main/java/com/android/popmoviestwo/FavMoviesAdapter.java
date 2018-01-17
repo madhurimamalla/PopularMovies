@@ -20,13 +20,17 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.FavM
 
     private final Context mContext;
 
-    private final String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w185//";
+    private final FavMoviesAdapter.FavMoviesAdapterOnClickListener mListener;
+
+    public interface FavMoviesAdapterOnClickListener{
+        void onClick(Cursor cursor, int position);
+    }
 
     private Cursor mCursor;
 
-    public FavMoviesAdapter(@NonNull Context mContext) {
+    public FavMoviesAdapter(@NonNull Context mContext, FavMoviesAdapterOnClickListener mListener) {
         this.mContext = mContext;
-
+        this.mListener = mListener;
     }
 
     @Override
@@ -41,16 +45,25 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.FavM
     }
 
     @Override
-    public void onBindViewHolder(FavMoviewsViewHolder viewHolder, int position) {
+    public void onBindViewHolder(FavMoviewsViewHolder viewHolder, final int position) {
 
         mCursor.moveToPosition(position);
         String img = mCursor.getString(MainActivity.INDEX_MOVIE_IMG);
 
         try {
+            String IMAGE_MOVIE_URL = "http://image.tmdb.org/t/p/w185//";
             Picasso.with(mContext).load(IMAGE_MOVIE_URL + img).error(R.drawable.user_placeholder_error).into(viewHolder.movieThumbnail);
         } catch (IllegalArgumentException e) {
             viewHolder.movieThumbnail.setImageResource(R.drawable.user_placeholder_error);
         }
+
+        viewHolder.movieThumbnail.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                mCursor.getPosition();
+                mListener.onClick(mCursor, position);
+            }
+        });
     }
 
     @Override
