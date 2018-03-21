@@ -1,13 +1,7 @@
 package com.android.popmoviestwo.utils;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
-
-import com.android.popmoviestwo.data.MovieContract;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,15 +42,15 @@ public class NetworkUtils {
     /**
      * TODO Add your API key here
      */
-    private final static String API_Key = "<<Insert your API key here>>";
+    private final static String API_Key = "<<Add your API key here>>";
 
-    public static URL buildUrl(String path) {
+    public static URL buildUrl(String path, String page) {
 
         Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                 .appendPath(path)
                 .appendQueryParameter(QUERY_PARAM, API_Key)
                 .appendQueryParameter(LANG_PARAM, LANG_VALUE)
-                .appendQueryParameter(PAGE_PARAM, PAGE_VALUE)
+                .appendQueryParameter(PAGE_PARAM, page)
                 .build();
 
         URL url = null;

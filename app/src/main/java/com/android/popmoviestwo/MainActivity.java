@@ -39,11 +39,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private FavMoviesAdapter favMoviesAdapter;
     private TextView mErrorMessage;
     private ProgressBar mLoadingIcon;
+    private GridLayoutManager mLayoutManager;
+    private EndlessRecyclerViewScrollListener scrollListener;
     private boolean fav_flag = false;
     private final static String FAV_MOVIES_FLAG = "fav_flag";
     private final static String MOVIE_LIST_SAVE_INSTANCE = "movie_list";
     private final static String PATH_POPULAR_PARAM = "popular";
     private final static String PATH_TOP_RATED_PARAM = "top_rated";
+    private final static String PAGE_NUMBER = "1";
 
     private ArrayList<Movie> moviesList = new ArrayList<>();
 
@@ -90,16 +93,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             getSupportLoaderManager().initLoader(ID_MOVIE_LOADER, null, this);
         } else {
             if (savedInstanceState == null || !savedInstanceState.containsKey(MOVIE_LIST_SAVE_INSTANCE)) {
-                new FetchMoviesList().execute(PATH_POPULAR_PARAM);
-                showGeneralMovieLists();
+                new FetchMoviesList().execute(PATH_POPULAR_PARAM, PAGE_NUMBER);
+                showGeneralMovieLists(PATH_POPULAR_PARAM);
             } else {
                 moviesList = savedInstanceState.getParcelableArrayList(MOVIE_LIST_SAVE_INSTANCE);
-                showGeneralMovieLists();
+                showGeneralMovieLists(PATH_POPULAR_PARAM);
             }
         }
     }
 
-    private void showGeneralMovieLists() {
+    private void showGeneralMovieLists(final String path_param) {
         /**
          * This is to automatically decide based on the width of the device how many noOfColumns are
          * possible in one row for the display of movie thumbnails
@@ -108,12 +111,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         int scalingFactor = 180;
         int noOfColumns = (int) (dpWidth / scalingFactor);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), noOfColumns);
+        mLayoutManager = new GridLayoutManager(getApplicationContext(), noOfColumns);
         recyclerView.setLayoutManager(mLayoutManager);
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         favMoviesAdapter = new FavMoviesAdapter(this, this);
         moviesAdapter = new MoviesAdapter(this, moviesList, this);
         recyclerView.setAdapter(moviesAdapter);
+        scrollListener = new EndlessRecyclerViewScrollListener(mLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                new FetchMoviesList().execute(path_param, Integer.toString(page));
+            }
+        };
+        recyclerView.addOnScrollListener(scrollListener);
         showMovieThumbnails();
     }
 
@@ -148,11 +161,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
 
             String path = params[0];
+            String page = params[1];
 
             /**
              * Get the URL to fetch the Popular movies
              */
-            URL moviesListUrl = NetworkUtils.buildUrl(path);
+            URL moviesListUrl = NetworkUtils.buildUrl(path, page);
 
             try {
                 String jsonPopularMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesListUrl);
@@ -171,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             if (mList != null) {
                 mErrorMessage.setVisibility(View.INVISIBLE);
                 showMovieThumbnails();
-                moviesList.clear();
                 moviesList.addAll(mList);
                 moviesAdapter.notifyDataSetChanged();
             } else {
@@ -191,17 +204,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         int id = item.getItemId();
 
         if (id == R.id.action_sort_by_top_rated) {
+            /**
+             * Clear the list so it can retrieve and display a new set of movies
+             */
+            moviesList.clear();
             fav_flag = false;
             getSupportLoaderManager().destroyLoader(ID_MOVIE_LOADER);
-            new FetchMoviesList().execute(PATH_TOP_RATED_PARAM);
-            showGeneralMovieLists();
+            new FetchMoviesList().execute(PATH_TOP_RATED_PARAM, PAGE_NUMBER);
+            showGeneralMovieLists(PATH_TOP_RATED_PARAM);
             return true;
         }
         if (id == R.id.action_sort_by_popular) {
+            /**
+             * Clear the list so it can retrieve and display a new set of movies
+             */
+            moviesList.clear();
             fav_flag = false;
             getSupportLoaderManager().destroyLoader(ID_MOVIE_LOADER);
-            new FetchMoviesList().execute(PATH_POPULAR_PARAM);
-            showGeneralMovieLists();
+            new FetchMoviesList().execute(PATH_POPULAR_PARAM, PAGE_NUMBER);
+            showGeneralMovieLists(PATH_POPULAR_PARAM);
             return true;
         }
         if (id == R.id.favorites_list) {
