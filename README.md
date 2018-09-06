@@ -7,6 +7,9 @@ Steps to make this run:
   + Once the build is successful, go to NetworkUtils.java and insert the API Key of The Movie Database in the String variable _API_Key_
   + You're now ready to run the app
   
+  
+![endlessscrolling](https://user-images.githubusercontent.com/827584/45140454-76d84900-b1d0-11e8-9e74-26fbd43a4ad3.gif)
+  
 
 ## Download these zipped files and unzip them to see a demo of the app:
 + [Pop Movies](https://github.com/madhurimamalla/PopularMovies/files/2347944/popMovies.mp4.zip)
